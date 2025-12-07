@@ -1,14 +1,15 @@
 import asyncio
 import logging
-from pyrogram import Client
-from pytgcalls import PyTgCalls, idle
+from pyrogram import Client      # correct
+from pyrogram import idle        # correct idle
+from pytgcalls import PyTgCalls
 
 from RaiChu.config import API_ID, API_HASH, BOT_TOKEN, SESSION_NAME
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Public clients (importable)
+# Bot client
 bot = Client(
     "RaiChu",
     api_id=API_ID,
@@ -17,27 +18,24 @@ bot = Client(
     plugins=dict(root="RaiChu.Player"),
 )
 
-# User/client session (assistant user) - used by PyTgCalls
+# User client (assistant)
+# FIX: remove session_name=
 aman = Client(
-    session_name=SESSION_NAME,
+    SESSION_NAME,
     api_id=API_ID,
     api_hash=API_HASH,
 )
 
-# PyTgCalls instance bound to the user client (aman)
+# PyTgCalls instance
 call_py = PyTgCalls(aman, cache_duration=100, overload_quiet_mode=True)
 
 
 async def start_clients():
-    """
-    Start bot (bot client), aman (user client) and PyTgCalls.
-    Call this once when launching the app.
-    """
     logger.info("Starting bot client...")
     await bot.start()
     logger.info("Bot started.")
 
-    logger.info("Starting user client (assistant)...")
+    logger.info("Starting assistant client...")
     await aman.start()
     logger.info("Assistant client started.")
 
@@ -45,25 +43,22 @@ async def start_clients():
     await call_py.start()
     logger.info("PyTgCalls started.")
 
-    # optional: fetch and log identification info
+    # Log info
     try:
         me_bot = await bot.get_me()
         me_aman = await aman.get_me()
-        logger.info("Logged in as bot: %s (@%s)", getattr(me_bot, "first_name", ""), getattr(me_bot, "username", ""))
-        logger.info("Logged in as user: %s (@%s)", getattr(me_aman, "first_name", ""), getattr(me_aman, "username", ""))
-    except Exception:
+        logger.info(f"Bot logged in as: {me_bot.first_name} (@{me_bot.username})")
+        logger.info(f"User logged in as: {me_aman.first_name} (@{me_aman.username})")
+    except:
         logger.exception("Failed to fetch account info.")
 
 
 async def stop_clients():
-    """
-    Stop call_py, aman and bot clients in the correct order.
-    """
     logger.info("Stopping PyTgCalls...")
     try:
         await call_py.stop()
     except Exception:
-        logger.exception("Error stopping PyTgCalls.")
+        logger.exception("Error stopping PyTgCalls")
 
     logger.info("Stopping assistant client...")
     try:
@@ -79,25 +74,21 @@ async def stop_clients():
 
 
 async def run_forever():
-    """
-    Start everything and keep process alive until interrupted.
-    Suitable entrypoint for Docker/Heroku/Render workers.
-    """
     await start_clients()
     try:
-        logger.info("Entering idle state. Bot is now running.")
-        await idle()  # wait until Ctrl+C / SIGTERM
+        logger.info("Entering idle state. Bot is running...")
+        await idle()  # CORRECT idle
     finally:
-        logger.info("Shutting down clients...")
+        logger.info("Shutting down...")
         await stop_clients()
         logger.info("Shutdown complete.")
 
 
+# prevent double execution when imported
 if __name__ == "__main__":
-    # If run directly, start the clients and block until stopped.
     try:
         asyncio.run(run_forever())
     except KeyboardInterrupt:
-        logger.info("KeyboardInterrupt received — exiting.")
+        logger.info("KeyboardInterrupt — exiting.")
     except Exception:
         logger.exception("Unhandled exception in main.")
