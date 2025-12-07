@@ -1,0 +1,61 @@
+{
+  "name": "JOKER_MUSIC",
+  "description": "A fast Telegram music bot for group voice chats. Built with Pyrogram and PyTgCalls.",
+  "logo": "https://graph.org/file/cebcd193b4b877983b61f-a970b9374d2c8c957e.jpg",
+  "keywords": [
+    "telegram",
+    "music-bot",
+    "pyrogram",
+    "pytgcalls",
+    "docker"
+  ],
+  "repository": "https://github.com/Recordu45/JOKER_MUSIC",
+  "success_url": "https://t.me/daakubottesting",
+  "env": {
+    "API_ID": {
+      "description": "Your API_ID from my.telegram.org",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Your API_HASH from my.telegram.org",
+      "required": true
+    },
+    "BOT_TOKEN": {
+      "description": "Bot token from @BotFather",
+      "required": true
+    },
+    "BOT_USERNAME": {
+      "description": "Bot username without @",
+      "required": true
+    },
+    "SESSION_NAME": {
+      "description": "Pyrogram string session",
+      "required": true
+    },
+    "SUDO_USERS": {
+      "description": "Sudo user IDs separated by space",
+      "required": true
+    },
+    "GROUP_SUPPORT": {
+      "description": "Support group username (optional)",
+      "required": false
+    },
+    "UPDATES_CHANNEL": {
+      "description": "Channel username for updates (optional)",
+      "required": false,
+      "value": "daakubottesting"
+    },
+    "OWNER_NAME": {
+      "description": "Owner username without @",
+      "required": false
+    }
+  },
+  "addons": [],
+  "stack": "container",
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  }
+}
