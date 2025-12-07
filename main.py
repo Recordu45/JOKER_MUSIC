@@ -2,44 +2,57 @@ import asyncio
 import sys
 import traceback
 import os
+import inspect
 from aiohttp import web
 from pyrogram import idle
 from Process.main import call_py, bot
 
 
+# ===================== SAFE START / STOP =====================
+
 async def safe_start(obj, name="object"):
+    """Start object; await if coroutine is returned."""
     if obj is None:
+        print(f"[DEBUG] No {name} to start.")
         return
+
     start_fn = getattr(obj, "start", None)
     if start_fn is None:
+        print(f"[DEBUG] {name} has no start()")
         return
+
     try:
-        if asyncio.iscoroutinefunction(start_fn):
-            await start_fn()
-        else:
-            start_fn()
+        result = start_fn()
+        if inspect.isawaitable(result):
+            await result
+        print(f"[INFO]: {name} started successfully.")
     except Exception:
         print(f"[WARN]: Failed to start {name}:")
         traceback.print_exc()
 
 
 async def safe_stop(obj, name="object"):
+    """Stop object; await if coroutine is returned."""
     if obj is None:
+        print(f"[DEBUG] No {name} to stop.")
         return
+
     stop_fn = getattr(obj, "stop", None)
     if stop_fn is None:
+        print(f"[DEBUG] {name} has no stop()")
         return
+
     try:
-        if asyncio.iscoroutinefunction(stop_fn):
-            await stop_fn()
-        else:
-            stop_fn()
+        result = stop_fn()
+        if inspect.isawaitable(result):
+            await result
+        print(f"[INFO]: {name} stopped successfully.")
     except Exception:
         print(f"[WARN]: Failed to stop {name}:")
         traceback.print_exc()
 
 
-# ============================ HEALTH SERVER ============================
+# ====================== HEALTH SERVER ========================
 
 async def start_health_server():
     port = int(os.environ.get("PORT", 8080))
@@ -66,14 +79,14 @@ async def stop_health_server(runner):
         pass
 
 
-# ============================= MAIN BOT ================================
+# ========================== MAIN BOT ==========================
 
 async def main():
     print("[INFO]: STARTING BOT CLIENT")
     await safe_start(bot, name="bot")
 
     print("[INFO]: STARTING PYTGCALLS CLIENT")
-    await safe_start(call_py, name="pytgcalls/call_py")
+    await safe_start(call_py, name="pytgcalls")
 
     # Start HTTP server for Render
     health_runner = await start_health_server()
@@ -85,7 +98,7 @@ async def main():
         print("[INFO]: Received stop signal")
     finally:
         print("[INFO]: STOPPING PYTGCALLS")
-        await safe_stop(call_py, name="pytgcalls/call_py")
+        await safe_stop(call_py, name="pytgcalls")
 
         print("[INFO]: STOPPING BOT")
         await safe_stop(bot, name="bot")
