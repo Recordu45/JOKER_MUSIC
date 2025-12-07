@@ -13,7 +13,7 @@ RUN apt-get update \
      ffmpeg \
      git \
      build-essential \
-  && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+  && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
   && apt-get install -y --no-install-recommends nodejs \
   && npm install -g npm@latest \
   && rm -rf /var/lib/apt/lists/*
