@@ -1,0 +1,30 @@
+# Core Telegram client + voice call
+pyrogram==2.0.106
+tgcrypto
+py-tgcalls==0.9.7
+
+# Audio handling / download
+ffmpeg-python
+yt-dlp
+
+# Utilities / env / http
+python-dotenv
+aiohttp
+aiofiles
+requests
+pillow
+
+# Optional DB, misc
+motor
+gitpython
+psutil
+future
+wget
+pyyaml==5.3.1
+speedtest-cli
+
+# Web publishing / small helpers
+telegraph
+python-arq
+bs4
+dnspython
