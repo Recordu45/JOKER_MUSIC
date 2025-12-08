@@ -1,6 +1,10 @@
+# 🎧 JOKER_MUSIC
+
 <p align="center">
   <img src="https://graph.org/file/cebcd193b4b877983b61f-a970b9374d2c8c957e.jpg" width="650" alt="JOKER MUSIC">
 </p>
+
+A simple, fast and powerful Telegram music bot.
 <p align="center">
   <b>Fast • Stable • Lightweight • Render/Railway Ready</b>
 </p>
